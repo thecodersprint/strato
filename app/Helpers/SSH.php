@@ -113,7 +113,7 @@ class SSH
             if ($this->asUser) {
                 $command = 'sudo su - '.$this->asUser.' -c '.'"'.addslashes($command).'"';
             }
-
+           
             $this->connection->setTimeout(0);
             if ($stream) {
                 $this->connection->exec($command, function ($output) {

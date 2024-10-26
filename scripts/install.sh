@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 
 if [[ -z "${V_USERNAME}" ]]; then
-  export V_USERNAME=vito
+  export V_USERNAME=strato
 fi
 
 if [[ -z "${V_PASSWORD}" ]]; then
@@ -112,7 +112,7 @@ server {
     listen 80;
     listen [::]:80;
     server_name _;
-    root /home/${V_USERNAME}/vito/public;
+    root /home/${V_USERNAME}/strato/public;
 
     add_header X-Frame-Options \"SAMEORIGIN\";
     add_header X-Content-Type-Options \"nosniff\";
@@ -142,41 +142,41 @@ server {
     }
 }
 "
-rm -rf /home/${V_USERNAME}/vito
-mkdir /home/${V_USERNAME}/vito
-chown -R ${V_USERNAME}:${V_USERNAME} /home/${V_USERNAME}/vito
-chmod -R 755 /home/${V_USERNAME}/vito
+rm -rf /home/${V_USERNAME}/strato
+mkdir /home/${V_USERNAME}/strato
+chown -R ${V_USERNAME}:${V_USERNAME} /home/${V_USERNAME}/strato
+chmod -R 755 /home/${V_USERNAME}/strato
 rm /etc/nginx/sites-available/default
 rm /etc/nginx/sites-enabled/default
-echo "${V_VHOST_CONFIG}" | tee /etc/nginx/sites-available/vito
-ln -s /etc/nginx/sites-available/vito /etc/nginx/sites-enabled/
+echo "${V_VHOST_CONFIG}" | tee /etc/nginx/sites-available/strato
+ln -s /etc/nginx/sites-available/strato /etc/nginx/sites-enabled/
 service nginx restart
-rm -rf /home/${V_USERNAME}/vito
+rm -rf /home/${V_USERNAME}/strato
 git config --global core.fileMode false
-git clone -b ${VITO_VERSION} ${V_REPO} /home/${V_USERNAME}/vito
-find /home/${V_USERNAME}/vito -type d -exec chmod 755 {} \;
-find /home/${V_USERNAME}/vito -type f -exec chmod 644 {} \;
-cd /home/${V_USERNAME}/vito && git config core.fileMode false
-cd /home/${V_USERNAME}/vito
+git clone -b ${VITO_VERSION} ${V_REPO} /home/${V_USERNAME}/strato
+find /home/${V_USERNAME}/strato -type d -exec chmod 755 {} \;
+find /home/${V_USERNAME}/strato -type f -exec chmod 644 {} \;
+cd /home/${V_USERNAME}/strato && git config core.fileMode false
+cd /home/${V_USERNAME}/strato
 git checkout $(git tag -l --merged ${VITO_VERSION} --sort=-v:refname | head -n 1)
 composer install --no-dev
 cp .env.prod .env
-touch /home/${V_USERNAME}/vito/storage/database.sqlite
+touch /home/${V_USERNAME}/strato/storage/database.sqlite
 php artisan key:generate
 php artisan storage:link
 php artisan migrate --force
 php artisan user:create Vito ${V_ADMIN_EMAIL} ${V_ADMIN_PASSWORD}
-openssl genpkey -algorithm RSA -out /home/${V_USERNAME}/vito/storage/ssh-private.pem
-chmod 600 /home/${V_USERNAME}/vito/storage/ssh-private.pem
-ssh-keygen -y -f /home/${V_USERNAME}/vito/storage/ssh-private.pem > /home/${V_USERNAME}/vito/storage/ssh-public.key
-chown -R ${V_USERNAME}:${V_USERNAME} /home/${V_USERNAME}/vito/storage/ssh-private.pem
-chown -R ${V_USERNAME}:${V_USERNAME} /home/${V_USERNAME}/vito/storage/ssh-public.key
+openssl genpkey -algorithm RSA -out /home/${V_USERNAME}/strato/storage/ssh-private.pem
+chmod 600 /home/${V_USERNAME}/strato/storage/ssh-private.pem
+ssh-keygen -y -f /home/${V_USERNAME}/strato/storage/ssh-private.pem > /home/${V_USERNAME}/strato/storage/ssh-public.key
+chown -R ${V_USERNAME}:${V_USERNAME} /home/${V_USERNAME}/strato/storage/ssh-private.pem
+chown -R ${V_USERNAME}:${V_USERNAME} /home/${V_USERNAME}/strato/storage/ssh-public.key
 
 # setup supervisor
 export V_WORKER_CONFIG="
 [program:worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /home/${V_USERNAME}/vito/artisan queue:work --sleep=3 --backoff=0 --queue=default,ssh,ssh-long --timeout=3600 --tries=1
+command=php /home/${V_USERNAME}/strato/artisan queue:work --sleep=3 --backoff=0 --queue=default,ssh,ssh-long --timeout=3600 --tries=1
 autostart=1
 autorestart=1
 user=vito
@@ -195,7 +195,7 @@ supervisorctl reread
 supervisorctl update
 
 # setup cronjobs
-echo "* * * * * cd /home/${V_USERNAME}/vito && php artisan schedule:run >> /dev/null 2>&1" | sudo -u ${V_USERNAME} crontab -
+echo "* * * * * cd /home/${V_USERNAME}/strato && php artisan schedule:run >> /dev/null 2>&1" | sudo -u ${V_USERNAME} crontab -
 
 # cleanup
 chown -R ${V_USERNAME}:${V_USERNAME} /home/${V_USERNAME}

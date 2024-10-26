@@ -32,7 +32,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # app
 RUN rm -rf /var/www/html
-RUN git clone -b 1.x https://github.com/vitodeploy/vito.git /var/www/html
+RUN git clone -b main https://github.com/thecodersprint/strato /var/www/html
 RUN [ "$RELEASE_ARG" = "1" ] && git checkout $(git tag -l --merged 1.x --sort=-v:refname | head -n 1) || true
 RUN composer install --no-dev --prefer-dist
 RUN chown -R www-data:www-data /var/www/html \

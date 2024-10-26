@@ -16,6 +16,7 @@ class Uninstall
         ], $service->handler()->deletionRules())->validate();
 
         $service->status = ServiceStatus::UNINSTALLING;
+        
         $service->save();
 
         dispatch(function () use ($service) {

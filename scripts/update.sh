@@ -1,6 +1,6 @@
 echo "Updating Vito..."
 
-cd /home/strato/vito
+cd /home/strato/strato
 
 echo "Pulling changes..."
 git fetch --all

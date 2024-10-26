@@ -45,6 +45,7 @@ class PHP extends AbstractService
     public function install(): void
     {
         $server = $this->service->server;
+        dd( $server->getSshUser());
         $server->ssh()->exec(
             $this->getScript('install-php.sh', [
                 'version' => $this->service->version,
@@ -63,6 +64,7 @@ class PHP extends AbstractService
             ]),
             'uninstall-php-'.$this->service->version
         );
+        dd(  $this->service->server->getSshUser());
         $this->service->server->os()->cleanup();
     }
 

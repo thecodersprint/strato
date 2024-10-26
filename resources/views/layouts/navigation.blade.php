@@ -20,7 +20,7 @@
                     <a href="/" class="ms-2 flex flex-none md:me-24">
                         <div class="relative flex items-center justify-start text-3xl font-extrabold">
                             <x-application-logo class="h-9 w-9 rounded-md" />
-                            <span class="ml-1 hidden md:block">Deploy</span>
+                            <span class="ml-1 hidden md:block">LaunchGrid</span>
                             <span
                                 class="absolute bottom-0 left-0 right-0 rounded-b-md bg-gray-700/60 text-center text-xs text-white md:relative md:ml-1 md:block md:bg-inherit md:text-inherit"
                             >
